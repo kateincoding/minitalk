@@ -1,0 +1,7 @@
+#+TITLE: mINITALK ORGANIZATION
+
+* To Do
+  SCHEDULED: <2021-08-25 Wed>
+  ** Study signals
+  ** Make work diagram
+

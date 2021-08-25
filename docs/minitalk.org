@@ -12,9 +12,9 @@
 Signals are standardized messages send to a running program to trigger specific behavior (such quitting or error handling). They are a limited form of inter-process communication (IPC), typically used in Unix, Unix-like, and other POSIX-compliant operating systems.
 
 - it shows all the posible signals that we can work
-```
+#+BEGIN_SRC
 kill -l
-```
+#+END_SRC
 
 - to kill a process
 ```

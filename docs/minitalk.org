@@ -17,14 +17,14 @@ kill -l
 #+END_SRC
 
 - to kill a process
-```
+#+BEGIN_SRC
 kill -SIGSTOP <PID>
-```
+#+END_SRC
 
 - to know all the open process that I have <PID>
-```
+#+BEGIN_SRC
 ps u
-```
+#+END_SRC
 
 ** List of commands
 
@@ -47,18 +47,18 @@ sets the disposition of the signal signum to handler, which is either SIG_IGN, S
 
 ** sigkill
 finish a process
-```
+#+BEGIN_SRC
 kill -SIGKILL <pid>
-```
+#+END_SRC
 
 ** sigstop
 pause a process
-```
+#+BEGIN_SRC
 kill -SIGSTOP <pid>
-```
+#+END_SRC
 
 ** sigcont
 to continue the process that is in pause
-```
+#+BEGIN_SRC
 kill -SIGCONT <pid>
-```
+#+END_SRC

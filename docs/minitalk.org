@@ -6,7 +6,7 @@
   - [ ] Work diagram
   - [ ] code
 
-* Study signals
+* I. Study signals
 
 ** What is a signal?
 Signals are standardized messages send to a running program to trigger specific behavior (such quitting or error handling). They are a limited form of inter-process communication (IPC), typically used in Unix, Unix-like, and other POSIX-compliant operating systems.
@@ -165,6 +165,11 @@ struct sigaction sa;
            void     (*sa_restorer)(void);
         };
 #+END_SRC
+- Important: If SA_SIGINFO is specified in sa_flags, then sa_sigaction
+       (instead of sa_handler) specifies the signal-handling function
+       for signum.  This function receives three arguments, as described
+       below.
+
 - Return value: sigaction() returns 0 on success; on error, -1 is returned, and errno is set to indicate the error.
 
 #+BEGIN_SRC
@@ -198,4 +203,39 @@ int main(void)
 **  getpid():
 #+BEGIN_SRC
 printf("this is your pid = %d\n", getpid());
+#+END_SRC
+
+* II. Work diagram
+SIGUSR1 represents 0 and SIGUSR2 represents 1
+Way to communicate between this 2 signals: is to make them represent a binary value each
+** Logicalof the program:
+- 128 is 10000000. This will be our mask to then compare with "&" and 
+*** client:
+- Goal: send the message with the pid process
+- Convert ASCII character to Binary character
+- Signal use
+
+#+BEGIN_SRC
+int	send_bits(int pid, char *msg)
+{
+	int	bitmask;
+	int	i;
+
+	bitmask = -1;
+	i = 0;
+	while(msg[i])
+	{
+		while(++bitmask < 8)
+		{
+			if (msg[i] & 0x80 >> bitmask)
+				printf("1");
+			else
+				printf("0");
+			usleep(3);
+		}
+		i++;
+	}
+	printf("\n");
+	return (0);
+}
 #+END_SRC

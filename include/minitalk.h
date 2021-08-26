@@ -3,14 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minitalk.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kate <kate@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/25 07:12:48 by kate              #+#    #+#             */
-/*   Updated: 2021/08/25 07:13:13 by kate             ###   ########.fr       */
+/*   Created: 2021/08/25 07:12:48 by ksoto             #+#    #+#             */
+/*   Updated: 2021/08/26 00:08:44 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINITALK_H
 # define MINITALK_H
+
+#include <stdlib.h>
+#include <signal.h>
 
 #endif

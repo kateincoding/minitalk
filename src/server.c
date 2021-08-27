@@ -6,7 +6,7 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:17 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/26 19:48:17 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/26 23:05:28 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@ void	error(int pid, char *str)
 {
 	if (str)
 		free(str);
-	write(STDERR_FILENO, "Error\n", 6);
-	//ft_putstr_fd("Unexpected error.\n", 2);
+	write(STDERR_FILENO, "Unexpected error\n", 17);
 	kill(pid, SIGUSR2);
 	exit(EXIT_FAILURE);
 }
@@ -38,7 +37,7 @@ void	receive_signal(int sig, siginfo_t *info, void *other)
 	static char	c = 0xFF;
 	static int	bits = 0;
 	static int	pid = 0;
-	static char *msg = 0;
+	static char	*msg = 0;
 
 	(void)other;
 	if (sig == SIGUSR1)
@@ -76,9 +75,9 @@ int	main(void)
 	sa.sa_sigaction = receive_signal;
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
-	printf("PID: %d\n", getpid());
+//	printf("PID: %d\n", getpid());
 	write(1, "PID: ", 5);
-//	ft_putnbr_fd(getpid(), 1);
+	ft_putnbr_fd(getpid(), 1);
 	write(1, "\n", 1);
 	while (1)
 		pause();

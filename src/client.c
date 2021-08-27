@@ -6,7 +6,7 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:09 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/26 02:33:31 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/26 23:05:26 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,33 +47,59 @@ int	ft_atoi(char *str)
 ** handle_error - handle error when argc != 3
 */
 
-void	handle_error(void)
+void	handle_error(int type)
 {
-	write(1, "usage: ./client [server-pid] [message]\n", 39);
-	exit(EXIT_FAILURE);
+	if (type == 1)
+	{
+		write(2, "usage: ./client [server-pid] [message]\n", 39);
+		exit(EXIT_FAILURE);
+	}
+	else if (type == 2)
+	{
+		write(2, "Error sending message\n", 22);
+		exit(EXIT_FAILURE);
+	}
 }
 
 /*
 ** send_bits - function that send the message to the server (ascii -> 8bits)
 ** @pid: id of process
 ** @msg: msg to send
+** static variables:
+** *message: It's a duplicate string given in the main() fx of client to send to server.
+** This variable has to be constant in replace of a global variable in order for the client
+** to send a bit every time sent_bits is called
+** st_pid: static pid
 */
 
 int	send_bits(int pid, char *msg)
 {
-	int	bitmask;
-	int	i;
+	static int		bitmask = -1;
+	static char		*message = 0;
+	static int		st_pid;
+	int				i;
 
-	bitmask = -1;
+	if (msg)
+		message = ft_strdup(msg);
+	if (!message)
+		free(0), handle_error(2);
+	if (pid)
+		st_pid = pid;
 	i = 0;
 	while (msg[i])
 	{
 		while (++bitmask < 8)
 		{
 			if (msg[i] & 0x80 >> bitmask)
-				printf("1");
+			{
+				if (kill(pid, SIGUSR2) == -1)
+					exit(1);
+			}
 			else
-				printf("0");
+			{
+				if (kill(pid, SIGUSR1) == -1)
+					exit(1);
+			}
 			usleep(3);
 		}
 		i++;
@@ -110,7 +136,7 @@ int	main(int argc, char **argv)
 	int	pid;
 
 	if (argc != 3)
-		handle_error();
+		handle_error(1);
 	signal(SIGUSR1, handle_client_signal);
 	signal(SIGUSR2, handle_client_signal);
 	pid = ft_atoi(argv[1]);

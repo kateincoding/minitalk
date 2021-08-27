@@ -6,7 +6,7 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:09 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/26 23:05:26 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/27 02:06:51 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,15 +115,21 @@ int	send_bits(int pid, char *msg)
 
 void	handle_client_signal(int sig)
 {
+	int	finish;
+
+	finish = 0;
 	if (sig == SIGUSR1)
-	{
-		write (STDOUT_FILENO, "Message send succesfully :)\n", 28);
-		exit (EXIT_SUCCESS);
-	}
-	else if (sig == SIGUSR2)
+		finish = send_bit(0, 0);
+	
+	if (sig == SIGUSR2)
 	{
 		write (STDERR_FILENO, "Server conexion error :(!\n", 26);
 		exit (EXIT_FAILURE);
+	}
+	if (finish)
+	{
+		write (STDOUT_FILENO, "Message send succesfully :)\n", 28);
+		exit (EXIT_SUCCESS);
 	}
 }
 

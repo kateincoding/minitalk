@@ -6,7 +6,7 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:09 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/27 11:34:43 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/27 18:26:54 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,8 @@ int	send_bits(int pid, char *msg)
 	}
 	if (!send_null_char(st_pid, message))
 		return (0);
-	free (message);
-	return (0);
+	free(message);
+	return (1);
 }
 
 /*
@@ -125,7 +125,7 @@ int	main(int argc, char **argv)
 {
 	int	pid;
 
-	if (argc != 3)
+	if (argc != 3 || !ft_isnumber(argv[1]))
 		handle_error(1);
 	signal(SIGUSR1, handle_client_signal);
 	signal(SIGUSR2, handle_client_signal);

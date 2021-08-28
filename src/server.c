@@ -6,7 +6,7 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:17 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/26 23:07:06 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/27 19:47:18 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,19 @@ void	error(int pid, char *str)
 	kill(pid, SIGUSR2);
 	exit(EXIT_FAILURE);
 }
+
+/*
+** print_msg - function that print a message
+** @msg: message to send
+** return: void
+*/
+
+void	*print_msg(char *msg)
+{
+	ft_putstr_fd(msg, 1);
+	free(msg);
+}
+
 /*
 ** receive_signal - function that handle each case of signal
 ** @sig: SIGUSR1 or SIGUSR2
@@ -46,7 +59,10 @@ void	receive_signal(int sig, siginfo_t *info, void *other)
 		c |= 0x80 >> bits;
 	if (++bits == 8)
 	{
-		printf ("-> %c\n", c);
+		if (c)
+			msg = ft_append(msg, c);
+		else
+			print_msg(msg);
 		bits = 0;
 		c = 0xFF;
 	}
@@ -57,7 +73,8 @@ void	receive_signal(int sig, siginfo_t *info, void *other)
 /*
 ** main - point of start the client program
 ** Functions election:
-** sigaction instead of signal to access to the pid of the sender: client 'info->si_pid'
+** sigaction instead of signal to access to the pid of
+** the sender: client 'info->si_pid'
 ** infinite pause() loop waiting for signals from client
 */
 
@@ -75,7 +92,6 @@ int	main(void)
 	sa.sa_sigaction = receive_signal;
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
-//	printf("PID: %d\n", getpid());
 	write(1, "PID: ", 5);
 	ft_putnbr_fd(getpid(), 1);
 	write(1, "\n", 1);

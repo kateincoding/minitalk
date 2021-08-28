@@ -6,17 +6,17 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:09 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/27 21:57:32 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/28 17:50:38 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "../include/minitalk.h"
 
 /*
 ** handle_error - handle error when argc != 3
 */
 
-void	handle_error(int type)
+void	handle_error(int type, char *str)
 {
 	if (type == 1)
 	{
@@ -25,7 +25,9 @@ void	handle_error(int type)
 	}
 	else if (type == 2)
 	{
-		write(2, "Error sending message\n", 22);
+		if (str)
+			free(str);
+		write(2, "Error: we couldn't send your message :'c \n", 42);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -44,14 +46,14 @@ int	send_null_char(int st_pid, char *message)
 	if (i++ != 8)
 	{
 		if (kill(st_pid, SIGUSR1) == -1)
-			free(message), handle_error(2);
+			handle_error(2, message);
 		return (0);
 	}
 	return (1);
 }
 
 /*
-** send_bits - function that send the message to the server (ascii -> 8bits)
+** send_bits_bits - function that send the message to the server (ascii -> 8bits)
 ** @pid: id of process
 ** @msg: msg to send
 ** static variables:
@@ -63,32 +65,32 @@ int	send_null_char(int st_pid, char *message)
 ** st_pid: static pid
 */
 
-int	send_bits(int pid, char *msg)
+int	send_bits_bits(int pid, char *str)
 {
-	static int		bitmask = -1;
-	static char		*message = 0;
-	static int		st_pid;
+	static char	*msg_to_send = 0;
+	static int	stc_pid = 0;
+	static int	bit = -1;
 
-	if (msg)
-		message = ft_strdup(msg);
-	if (!message)
-		free(0), handle_error(2);
+	if (str)
+		msg_to_send = ft_strdup(str);
+	if (!msg_to_send)
+		handle_error(2, 0);
 	if (pid)
-		st_pid = pid;
-	if (msg[++bitmask / 8])
+		stc_pid = pid;
+	if (msg_to_send[++bit / 8])
 	{
-		if (msg[bitmask / 8] & (0x80 >> (bitmask % 8)))
+		if (msg_to_send[bit / 8] & (0x80 >> (bit % 8)))
 		{
-			if (kill(pid, SIGUSR2) == -1)
-				free(msg), handle_error(2);
+			if (kill(stc_pid, SIGUSR2) == -1)
+				handle_error(2, msg_to_send);
 		}
-		else if (kill(pid, SIGUSR1) == -1)
-			free(msg), handle_error(2);
+		else if (kill(stc_pid, SIGUSR1) == -1)
+			handle_error(2, msg_to_send);
 		return (0);
 	}
-	if (!send_null_char(st_pid, message))
+	if (!send_null_char(stc_pid, msg_to_send))
 		return (0);
-	free(message);
+	free(msg_to_send);
 	return (1);
 }
 
@@ -103,16 +105,16 @@ void	handle_client_signal(int sig)
 
 	finish = 0;
 	if (sig == SIGUSR1)
-		finish = send_bits(0, 0);
-	if (sig == SIGUSR2)
+		finish = send_bits_bits(0, 0);
+	else if (sig == SIGUSR2)
 	{
-		write (STDERR_FILENO, "Server conexion error :(!\n", 26);
-		exit (EXIT_FAILURE);
+		write (STDERR_FILENO, "[Error] Bad conexion with the server :(!\n", 53);
+		exit(EXIT_FAILURE);
 	}
 	if (finish)
 	{
-		write (STDOUT_FILENO, "Message send succesfully :)\n", 28);
-		exit (EXIT_SUCCESS);
+		write (STDOUT_FILENO, "[Success] Message send succesfully :)\n", 37);
+		exit(EXIT_SUCCESS);
 	}
 }
 
@@ -125,11 +127,11 @@ int	main(int argc, char **argv)
 	int	pid;
 
 	if (argc != 3 || !ft_isnumber(argv[1]))
-		handle_error(1);
+		handle_error(1, NULL);
 	signal(SIGUSR1, handle_client_signal);
 	signal(SIGUSR2, handle_client_signal);
 	pid = ft_atoi(argv[1]);
-	send_bits(pid, argv[2]);
+	send_bits_bits(pid, argv[2]);
 	while (1)
 		pause();
 }

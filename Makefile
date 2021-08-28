@@ -6,7 +6,7 @@
 #    By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/08/26 00:08:57 by ksoto             #+#    #+#              #
-#    Updated: 2021/08/26 14:10:46 by ksoto            ###   ########.fr        #
+#    Updated: 2021/08/27 22:27:02 by ksoto            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CLIENT		=	client
 
 #***************** LIB ********************#
 # General
-INC			=	./includes/
+INC			=	./include/
 
 # Lib
 LIB			=	./libft/
@@ -26,7 +26,7 @@ INCLUDE		=	-I $(INC) -I $(INCFT)
 
 #***************** DIR ********************#
 
-DIRSRC		=	./srcs/
+DIRSRC		=	./src/
 DIRFT		=	$(LIB)/src/
 
 #***************** SRC ********************#
@@ -68,24 +68,10 @@ E0M			=	"\e[0m"
 #************************ DEPS COMPILATION *************************
 
 %.o		:		../$(DIRSRC)/%.c
-				@printf $(GREEN)"Generating libftprintf objects... %-33.33s\r" $@
+				@printf $(GREEN)"Generating minitalk objects... %-33.33s\r" $@
 				@$(CC) $(CFLAGS) $(INCLUDE) -MMD -o $@ -c $<
 
 #************************ MAIN COMPILATION *************************
-
-$(SERVER)	:	ftlib $(OBJS)
-				@$(ECHO)
-				@mv libft.a $(SERVER)
-				@ar rcs $(SERVER) $(OBJS)
-				@ranlib $(SERVER)
-				@$(ECHO) $(BOLD)$(GREEN)'> server compiled'$(E0M)
-
-$(CLIENT)	:	ftlib $(OBJS)
-				@$(ECHO)
-				@mv libft.a $(CLIENT)
-				@ar rcs $(CLIENT) $(OBJS)
-				@ranlib $(CLIENT)
-				@$(ECHO) $(BOLD)$(GREEN)'> client compiled'$(E0M)
 
 clean	:
 				@($(RM) $(OBJS)) 
@@ -94,12 +80,12 @@ clean	:
 				@$(ECHO) $(BOLD)$(RED)'> directory cleaned'$(E0M)
 
 all		:		ftlib $(OBJS)
-				@$(CC) $(CFLAGS) ./srcs/server.c libft/libft.a -o $(SERVER)
-				@$(CC) $(CFLAGS) ./srcs/client.c libft/libft.a -o $(CLIENT)
+				@$(CC) $(INCLUDE) $(CFLAGS) -o $(SERVER) $(OBJS)
+				@$(CC) $(INCLUDE) $(CFLAGS) -o $(CLIENT) $(OBJS)
 				@$(ECHO) $(BOLD)$(GREEN)'> server compiled'$(E0M)
 				@$(ECHO) $(BOLD)$(GREEN)'> client compiled'$(E0M)
 
-bonus	:		$(NAME)
+bonus	:		all
 
 fclean	:
 				@($(RM) $(OBJS))
@@ -111,12 +97,9 @@ fclean	:
 
 re		:		fclean all
 
-bonus	: 		all
-
 ftlib	:
 				@(cd $(LIB) && $(MAKE))
 
 .PHONY	:		all bonus clean fclean re ftlib
-
 
 -include $(DEPS)

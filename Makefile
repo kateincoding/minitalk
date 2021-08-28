@@ -6,11 +6,11 @@
 #    By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/08/26 00:08:57 by ksoto             #+#    #+#              #
-#    Updated: 2021/08/27 22:27:02 by ksoto            ###   ########.fr        #
+#    Updated: 2021/08/27 23:50:40 by ksoto            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-
+NAME		=
 SERVER		=	server
 CLIENT		=	client
 
@@ -73,17 +73,23 @@ E0M			=	"\e[0m"
 
 #************************ MAIN COMPILATION *************************
 
+$(NAME):		all
+
+$(SERVER):		ftlib
+				@$(CC) $(CFLAGS) src/server.c $(INCLUDE) -o $(SERVER)
+				@$(ECHO) $(BOLD)$(GREEN)'> server compiled'$(E0M)
+
+$(CLIENT):		ftlib
+				@$(CC) $(CFLAGS) src/client.c $(INCLUDE) -o $(CLIENT)
+				@$(ECHO) $(BOLD)$(GREEN)'> client compiled'$(E0M)
+
 clean	:
 				@($(RM) $(OBJS)) 
 				@($(RM) $(DEPS))
 				@(cd $(LIB) && $(MAKE) clean)
 				@$(ECHO) $(BOLD)$(RED)'> directory cleaned'$(E0M)
 
-all		:		ftlib $(OBJS)
-				@$(CC) $(INCLUDE) $(CFLAGS) -o $(SERVER) $(OBJS)
-				@$(CC) $(INCLUDE) $(CFLAGS) -o $(CLIENT) $(OBJS)
-				@$(ECHO) $(BOLD)$(GREEN)'> server compiled'$(E0M)
-				@$(ECHO) $(BOLD)$(GREEN)'> client compiled'$(E0M)
+all		:		$(SERVER) $(CLIENT)
 
 bonus	:		all
 
@@ -101,5 +107,3 @@ ftlib	:
 				@(cd $(LIB) && $(MAKE))
 
 .PHONY	:		all bonus clean fclean re ftlib
-
--include $(DEPS)

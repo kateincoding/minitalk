@@ -6,14 +6,11 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:09 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/27 18:26:54 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/27 21:57:32 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <signal.h>
+#include "minitalk.h"
 
 /*
 ** handle_error - handle error when argc != 3
@@ -81,8 +78,10 @@ int	send_bits(int pid, char *msg)
 	if (msg[++bitmask / 8])
 	{
 		if (msg[bitmask / 8] & (0x80 >> (bitmask % 8)))
+		{
 			if (kill(pid, SIGUSR2) == -1)
 				free(msg), handle_error(2);
+		}
 		else if (kill(pid, SIGUSR1) == -1)
 			free(msg), handle_error(2);
 		return (0);
@@ -104,7 +103,7 @@ void	handle_client_signal(int sig)
 
 	finish = 0;
 	if (sig == SIGUSR1)
-		finish = send_bit(0, 0);
+		finish = send_bits(0, 0);
 	if (sig == SIGUSR2)
 	{
 		write (STDERR_FILENO, "Server conexion error :(!\n", 26);

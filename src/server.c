@@ -6,14 +6,11 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:17 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/27 19:47:18 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/27 22:05:39 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <signal.h>
+#include "minitalk.h"
 
 void	error(int pid, char *str)
 {
@@ -30,7 +27,7 @@ void	error(int pid, char *str)
 ** return: void
 */
 
-void	*print_msg(char *msg)
+void	print_msg(char *msg)
 {
 	ft_putstr_fd(msg, 1);
 	free(msg);
@@ -49,7 +46,6 @@ void	receive_signal(int sig, siginfo_t *info, void *other)
 {
 	static char	c = 0xFF;
 	static int	bits = 0;
-	static int	pid = 0;
 	static char	*msg = 0;
 
 	(void)other;

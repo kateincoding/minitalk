@@ -6,17 +6,23 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:17 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/27 22:05:39 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/28 03:42:24 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "../include/minitalk.h"
 
-void	error(int pid, char *str)
+/*
+** error - error 
+** @msg: message to send
+** return: void
+*/
+
+void	handle_error(int pid, char *str)
 {
 	if (str)
 		free(str);
-	write(STDERR_FILENO, "Unexpected error\n", 17);
+	write(STDERR_FILENO, "Sorry: unexpected error\n", 17);
 	kill(pid, SIGUSR2);
 	exit(EXIT_FAILURE);
 }
@@ -27,10 +33,11 @@ void	error(int pid, char *str)
 ** return: void
 */
 
-void	print_msg(char *msg)
+void	print_msg(char **msg)
 {
-	ft_putstr_fd(msg, 1);
-	free(msg);
+	ft_putstr_fd(*msg, 1);
+	free(*msg);
+	*msg = NULL;
 }
 
 /*
@@ -47,8 +54,11 @@ void	receive_signal(int sig, siginfo_t *info, void *other)
 	static char	c = 0xFF;
 	static int	bits = 0;
 	static char	*msg = 0;
+	static int	pid = 0;
 
 	(void)other;
+	if (info->si_pid)
+		pid = info->si_pid;
 	if (sig == SIGUSR1)
 		c ^= 0x80 >> bits;
 	else if (sig == SIGUSR2)
@@ -58,12 +68,26 @@ void	receive_signal(int sig, siginfo_t *info, void *other)
 		if (c)
 			msg = ft_append(msg, c);
 		else
-			print_msg(msg);
+			print_msg(&msg);
 		bits = 0;
 		c = 0xFF;
 	}
-	if (kill(info->si_pid, SIGUSR1) == -1)
-		error(info->si_pid, msg);
+	if (kill(pid, SIGUSR1) == -1)
+		handle_error(pid, msg);
+}
+
+/*
+** manipulate_sa - manipulate sa structure
+** @sa: sa structure
+** non_mask: no mask
+*/
+
+void	manipulate_sa(struct sigaction	*sa, sigset_t non_mask)
+{
+	sa->sa_handler = 0;
+	sa->sa_flags = SA_SIGINFO;
+	sa->sa_mask = non_mask;
+	sa->sa_sigaction = receive_signal;
 }
 
 /*
@@ -82,10 +106,7 @@ int	main(void)
 	sigemptyset(&non_mask);
 	sigaddset(&non_mask, SIGINT);
 	sigaddset(&non_mask, SIGQUIT);
-	sa.sa_handler = 0;
-	sa.sa_flags = SA_SIGINFO;
-	sa.sa_mask = non_mask;
-	sa.sa_sigaction = receive_signal;
+	manipulate_sa(&sa, non_mask);
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 	write(1, "PID: ", 5);

@@ -6,14 +6,15 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:17 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/28 03:42:24 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/29 21:47:57 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minitalk.h"
 
 /*
-** error - error 
+** error - error
+** @pid: id of process
 ** @msg: message to send
 ** return: void
 */
@@ -22,36 +23,49 @@ void	handle_error(int pid, char *str)
 {
 	if (str)
 		free(str);
-	write(STDERR_FILENO, "Sorry: unexpected error\n", 17);
+	write(STDERR_FILENO, "Sorry: unexpected error :c\n", 17);
 	kill(pid, SIGUSR2);
 	exit(EXIT_FAILURE);
 }
 
 /*
-** print_msg - function that print a message
+** print_msg_from_bits - function that print a message from bits
+** @bits: bits that to pass to a char
+** @letter: letter to print
 ** @msg: message to send
 ** return: void
 */
 
-void	print_msg(char **msg)
+void	print_msg_from_bits(int *bits, char *letter, char **msg)
 {
-	ft_putstr_fd(*msg, 1);
-	free(*msg);
-	*msg = NULL;
+	if (++*bits == 8)
+	{
+		if (*letter)
+			*msg = ft_append(*msg, *letter);
+		else
+		{
+			ft_putstr_fd(*msg, 1);
+			free(*msg);
+			*msg = NULL;
+		}
+		*bits = 0;
+		*letter = 0xFF;
+	}
 }
 
 /*
 ** receive_signal - function that handle each case of signal
 ** @sig: SIGUSR1 or SIGUSR2
-** @info: The siginfo_t structure is passed as the second parameter 
-** to a user signal handler function, if the SA_SIGINFO flag was 
+** @info: The siginfo_t structure is passed as the second parameter
+** to a user signal handler function, if the SA_SIGINFO flag was
 ** specified when the handler was installed with sigaction().
-** @other: 
+** @other: void
+** Return: void
 */
 
 void	receive_signal(int sig, siginfo_t *info, void *other)
 {
-	static char	c = 0xFF;
+	static char	letter = 0xFF;
 	static int	bits = 0;
 	static char	*msg = 0;
 	static int	pid = 0;
@@ -60,18 +74,10 @@ void	receive_signal(int sig, siginfo_t *info, void *other)
 	if (info->si_pid)
 		pid = info->si_pid;
 	if (sig == SIGUSR1)
-		c ^= 0x80 >> bits;
+		letter ^= 0x80 >> bits;
 	else if (sig == SIGUSR2)
-		c |= 0x80 >> bits;
-	if (++bits == 8)
-	{
-		if (c)
-			msg = ft_append(msg, c);
-		else
-			print_msg(&msg);
-		bits = 0;
-		c = 0xFF;
-	}
+		letter |= 0x80 >> bits;
+	print_msg_from_bits(&bits, &letter, &msg);
 	if (kill(pid, SIGUSR1) == -1)
 		handle_error(pid, msg);
 }

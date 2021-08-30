@@ -6,7 +6,7 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:09 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/28 17:50:38 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/29 21:50:49 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,8 @@ void	handle_client_signal(int sig)
 
 /*
 ** main - point of start the client program
+** @argc: number of args
+** @argv: arguments
 */
 
 int	main(int argc, char **argv)

@@ -1,5 +1,6 @@
 # minitalk
 Small data exchange program using UNIX signals
+* To know what study before to code and how I solve it, go to [wiki docs](https://github.com/kateincoding/minitalk/wiki)
 
 ## Common Instructions
 

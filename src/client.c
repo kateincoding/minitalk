@@ -6,48 +6,17 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:09 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/26 23:05:26 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/08/29 21:50:49 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <signal.h>
-
-int	ft_atoi(char *str)
-{
-	int		i;
-	int		sign;
-	long	number;
-
-	i = 0;
-	sign = 1;
-	number = 0;
-	while (str[i] == ' ' || str[i] == '\n' || str[i] == '\t'
-		|| str[i] == '\v' || str[i] == '\f' || str[i] == '\r')
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign = -1;
-		else
-			sign = 1;
-		i++;
-	}
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		number = (number * 10) + (str[i] - '0');
-		i++;
-	}
-	return (sign * number);
-}
+#include "../include/minitalk.h"
 
 /*
 ** handle_error - handle error when argc != 3
 */
 
-void	handle_error(int type)
+void	handle_error(int type, char *str)
 {
 	if (type == 1)
 	{
@@ -56,56 +25,73 @@ void	handle_error(int type)
 	}
 	else if (type == 2)
 	{
-		write(2, "Error sending message\n", 22);
+		if (str)
+			free(str);
+		write(2, "Error: we couldn't send your message :'c \n", 42);
 		exit(EXIT_FAILURE);
 	}
 }
 
 /*
-** send_bits - function that send the message to the server (ascii -> 8bits)
+** send_null_char - send the null character "\0" = 0000 0000
+** it will be sended when all the message already was sent
+** @st_pid: pid to send
+** message to free
+*/
+
+int	send_null_char(int st_pid, char *message)
+{
+	static int	i = 0;
+
+	if (i++ != 8)
+	{
+		if (kill(st_pid, SIGUSR1) == -1)
+			handle_error(2, message);
+		return (0);
+	}
+	return (1);
+}
+
+/*
+** send_bits_bits - function that send the message to the server (ascii -> 8bits)
 ** @pid: id of process
 ** @msg: msg to send
 ** static variables:
-** *message: It's a duplicate string given in the main() fx of client to send to server.
-** This variable has to be constant in replace of a global variable in order for the client
-** to send a bit every time sent_bits is called
+** *message: It's a duplicate string given in the main() fx of client to send to
+** server. This variable has to be constant in replace of a global 
+** variable in order for the client to send a bit every time sent_bits is called
+** The message is passed bit per bit in order all the message is send it, that's
+** why instead of a while(msg[i]). It's replaced by "if" and static variables
 ** st_pid: static pid
 */
 
-int	send_bits(int pid, char *msg)
+int	send_bits_bits(int pid, char *str)
 {
-	static int		bitmask = -1;
-	static char		*message = 0;
-	static int		st_pid;
-	int				i;
+	static char	*msg_to_send = 0;
+	static int	stc_pid = 0;
+	static int	bit = -1;
 
-	if (msg)
-		message = ft_strdup(msg);
-	if (!message)
-		free(0), handle_error(2);
+	if (str)
+		msg_to_send = ft_strdup(str);
+	if (!msg_to_send)
+		handle_error(2, 0);
 	if (pid)
-		st_pid = pid;
-	i = 0;
-	while (msg[i])
+		stc_pid = pid;
+	if (msg_to_send[++bit / 8])
 	{
-		while (++bitmask < 8)
+		if (msg_to_send[bit / 8] & (0x80 >> (bit % 8)))
 		{
-			if (msg[i] & 0x80 >> bitmask)
-			{
-				if (kill(pid, SIGUSR2) == -1)
-					exit(1);
-			}
-			else
-			{
-				if (kill(pid, SIGUSR1) == -1)
-					exit(1);
-			}
-			usleep(3);
+			if (kill(stc_pid, SIGUSR2) == -1)
+				handle_error(2, msg_to_send);
 		}
-		i++;
+		else if (kill(stc_pid, SIGUSR1) == -1)
+			handle_error(2, msg_to_send);
+		return (0);
 	}
-	printf("\n");
-	return (0);
+	if (!send_null_char(stc_pid, msg_to_send))
+		return (0);
+	free(msg_to_send);
+	return (1);
 }
 
 /*
@@ -115,32 +101,39 @@ int	send_bits(int pid, char *msg)
 
 void	handle_client_signal(int sig)
 {
+	int	finish;
+
+	finish = 0;
 	if (sig == SIGUSR1)
-	{
-		write (STDOUT_FILENO, "Message send succesfully :)\n", 28);
-		exit (EXIT_SUCCESS);
-	}
+		finish = send_bits_bits(0, 0);
 	else if (sig == SIGUSR2)
 	{
-		write (STDERR_FILENO, "Server conexion error :(!\n", 26);
-		exit (EXIT_FAILURE);
+		write (STDERR_FILENO, "[Error] Bad conexion with the server :(!\n", 53);
+		exit(EXIT_FAILURE);
+	}
+	if (finish)
+	{
+		write (STDOUT_FILENO, "[Success] Message send succesfully :)\n", 37);
+		exit(EXIT_SUCCESS);
 	}
 }
 
 /*
 ** main - point of start the client program
+** @argc: number of args
+** @argv: arguments
 */
 
 int	main(int argc, char **argv)
 {
 	int	pid;
 
-	if (argc != 3)
-		handle_error(1);
+	if (argc != 3 || !ft_isnumber(argv[1]))
+		handle_error(1, NULL);
 	signal(SIGUSR1, handle_client_signal);
 	signal(SIGUSR2, handle_client_signal);
 	pid = ft_atoi(argv[1]);
-	send_bits(pid, argv[2]);
+	send_bits_bits(pid, argv[2]);
 	while (1)
 		pause();
 }

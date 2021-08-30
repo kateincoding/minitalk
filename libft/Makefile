@@ -6,7 +6,7 @@
 #    By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/08/26 00:09:50 by ksoto             #+#    #+#              #
-#    Updated: 2021/08/26 22:59:06 by ksoto            ###   ########.fr        #
+#    Updated: 2021/08/29 23:57:46 by ksoto            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ DIRSRC		=	./src/
 
 #***************** SRC ********************#
 
-SRC			=	ft_atoi.c ft_putchar_fd.c ft_putnbr_fd.c ft_putstr_fd.c ft_strdup.c
+SRC			=	ft_append.c ft_atoi.c ft_isdigit.c ft_isnumber.c ft_putchar_fd.c ft_putnbr_fd.c ft_putstr_fd.c ft_strdup.c ft_strlen.c
 
 #***************** DEPS *******************#
 

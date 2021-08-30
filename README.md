@@ -2,6 +2,22 @@
 Small data exchange program using UNIX signals
 * To know what study before to code and how I solve it, go to [wiki docs](https://github.com/kateincoding/minitalk/wiki)
 
+## How to run?
+```
+make all
+```
+Open 2 terminals and run
+
+Terminal 1:
+```
+./server
+```
+
+Terminal 2:
+```
+./client <PID> <string message that you want to send>
+```
+
 ## Common Instructions
 
 Your project must be written in accordance with the Norm. If you have bonus

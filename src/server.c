@@ -88,7 +88,7 @@ void	receive_signal(int sig, siginfo_t *info, void *other)
 ** non_mask: no mask
 */
 
-void	manipulate_sa(struct sigaction	*sa, sigset_t non_mask)
+void	manipulate_sa(struct sigaction *sa, sigset_t non_mask)
 {
 	sa->sa_handler = 0;
 	sa->sa_flags = SA_SIGINFO;

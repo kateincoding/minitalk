@@ -6,7 +6,7 @@
 #    By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/08/26 00:08:57 by ksoto             #+#    #+#              #
-#    Updated: 2021/08/30 00:16:55 by ksoto            ###   ########.fr        #
+#    Updated: 2021/08/31 15:37:15 by ksoto            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -73,11 +73,7 @@ E0M			=	"\e[0m"
 
 #************************ MAIN COMPILATION *************************
 
-clean	:
-				@($(RM) $(OBJS)) 
-				@($(RM) $(DEPS))
-				@(cd $(LIB) && $(MAKE) clean)
-				@$(ECHO) $(BOLD)$(RED)'> directory cleaned'$(E0M)
+$(MAKE) :		all
 
 all		:		ftlib
 				@$(CC) $(CFLAGS) ./src/server.c libft/libft.a -o $(SERVER)
@@ -86,6 +82,12 @@ all		:		ftlib
 				@$(ECHO) $(BOLD)$(GREEN)'> client compiled'$(E0M)
 
 bonus	:		all
+
+clean	:
+				@($(RM) $(OBJS)) 
+				@($(RM) $(DEPS))
+				@(cd $(LIB) && $(MAKE) clean)
+				@$(ECHO) $(BOLD)$(RED)'> directory cleaned'$(E0M)
 
 fclean	:
 				@($(RM) $(OBJS))

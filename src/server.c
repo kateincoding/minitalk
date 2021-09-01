@@ -6,7 +6,7 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:17 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/29 21:47:57 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/09/01 05:28:42 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void	print_msg_from_bits(int *bits, char *letter, char **msg)
 			*msg = ft_append(*msg, *letter);
 		else
 		{
+			*msg = ft_append(*msg, '\n');
 			ft_putstr_fd(*msg, 1);
 			free(*msg);
 			*msg = NULL;

@@ -6,7 +6,7 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:09 by ksoto             #+#    #+#             */
-/*   Updated: 2021/08/29 21:50:49 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/09/01 05:24:27 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void	handle_client_signal(int sig)
 	}
 	if (finish)
 	{
-		write (STDOUT_FILENO, "[Success] Message send succesfully :)\n", 37);
+		write (STDOUT_FILENO, "[Success] Message send succesfully :)\n", 38);
 		exit(EXIT_SUCCESS);
 	}
 }
@@ -130,6 +130,11 @@ int	main(int argc, char **argv)
 
 	if (argc != 3 || !ft_isnumber(argv[1]))
 		handle_error(1, NULL);
+	if (ft_strlen(argv[2]) < 1)
+	{
+		write (STDOUT_FILENO, "[Success] Message send succesfully :)\n", 38);
+		exit(EXIT_SUCCESS);
+	}
 	signal(SIGUSR1, handle_client_signal);
 	signal(SIGUSR2, handle_client_signal);
 	pid = ft_atoi(argv[1]);

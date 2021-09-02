@@ -77,7 +77,7 @@ int	send_bits_bits(int pid, char *str)
 		handle_error(2, 0);
 	if (pid)
 		stc_pid = pid;
-	if (++bit < (int)ft_strlen(msg_to_send) && msg_to_send[++bit / 8])
+	if (((++bit / 8) < (int)ft_strlen(msg_to_send)) && msg_to_send[bit / 8])
 	{
 		if (msg_to_send[bit / 8] & (0x80 >> (bit % 8)))
 		{

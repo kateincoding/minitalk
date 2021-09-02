@@ -73,7 +73,7 @@ E0M			=	"\e[0m"
 
 #************************ MAIN COMPILATION *************************
 
-$(MAKE) :		all
+$(MAKE)		:		all
 
 all		:		ftlib
 				@$(CC) $(CFLAGS) ./src/server.c libft/libft.a -o $(SERVER)
@@ -81,15 +81,15 @@ all		:		ftlib
 				@$(ECHO) $(BOLD)$(GREEN)'> server compiled'$(E0M)
 				@$(ECHO) $(BOLD)$(GREEN)'> client compiled'$(E0M)
 
-bonus	:		all
+bonus		:		all
 
-clean	:
+clean		:
 				@($(RM) $(OBJS)) 
 				@($(RM) $(DEPS))
 				@(cd $(LIB) && $(MAKE) clean)
 				@$(ECHO) $(BOLD)$(RED)'> directory cleaned'$(E0M)
 
-fclean	:
+fclean		:
 				@($(RM) $(OBJS))
 				@($(RM) $(DEPS))
 				@$(RM) server
@@ -99,9 +99,9 @@ fclean	:
 
 re		:		fclean all
 
-ftlib	:
+ftlib		:
 				@(cd $(LIB) && $(MAKE))
 
-.PHONY	:		all bonus clean fclean re ftlib
+.PHONY		:		all bonus clean fclean re ftlib
 
 -include $(DEPS)

@@ -6,7 +6,7 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:09 by ksoto             #+#    #+#             */
-/*   Updated: 2021/09/01 22:03:10 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/09/01 22:13:32 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@ void	handle_error(int type, char *str)
 {
 	if (type == 1)
 	{
-		write(2, "usage: ./client [server-pid] [message]\n", 39);
+		write(2, "[Format Error]: ./client <PID> <message>\n", 41);
 		exit(EXIT_FAILURE);
 	}
 	else if (type == 2)
 	{
 		if (str)
 			free(str);
-		write(2, "Error: we couldn't send your message :'c \n", 42);
+		write(2, "[Error]: we couldn't send your message :'c\n", 43);
 		exit(EXIT_FAILURE);
 	}
 }

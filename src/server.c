@@ -6,7 +6,7 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:17 by ksoto             #+#    #+#             */
-/*   Updated: 2021/09/01 05:28:42 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/09/01 22:13:30 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	handle_error(int pid, char *str)
 {
 	if (str)
 		free(str);
-	write(STDERR_FILENO, "Sorry: unexpected error :c\n", 17);
+	write(STDERR_FILENO, "[ERROR] Sorry: unexpected error :c\n", 35);
 	kill(pid, SIGUSR2);
 	exit(EXIT_FAILURE);
 }

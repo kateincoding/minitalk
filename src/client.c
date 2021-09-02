@@ -6,7 +6,7 @@
 /*   By: ksoto <ksoto@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 07:34:09 by ksoto             #+#    #+#             */
-/*   Updated: 2021/09/01 05:24:27 by ksoto            ###   ########.fr       */
+/*   Updated: 2021/09/01 22:03:10 by ksoto            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,13 @@ void	handle_error(int type, char *str)
 ** message to free
 */
 
-int	send_null_char(int st_pid, char *message)
+int	send_null_char(int pid, char *message)
 {
-	static int	i = 0;
+	static int	idx = 0;
 
-	if (i++ != 8)
+	if (idx++ != 8)
 	{
-		if (kill(st_pid, SIGUSR1) == -1)
+		if (kill(pid, SIGUSR1) == -1)
 			handle_error(2, message);
 		return (0);
 	}
@@ -130,11 +130,6 @@ int	main(int argc, char **argv)
 
 	if (argc != 3 || !ft_isnumber(argv[1]))
 		handle_error(1, NULL);
-	if (ft_strlen(argv[2]) < 1)
-	{
-		write (STDOUT_FILENO, "[Success] Message send succesfully :)\n", 38);
-		exit(EXIT_SUCCESS);
-	}
 	signal(SIGUSR1, handle_client_signal);
 	signal(SIGUSR2, handle_client_signal);
 	pid = ft_atoi(argv[1]);
